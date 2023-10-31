@@ -27,7 +27,32 @@ namespace Organizer
         /// <param name="high">De index within this.array to stop with</param>
         private void SortFunction(int low, int high)
         {
-            throw new NotImplementedException();
+            bool swapped; // to check whether a swapp happened > avoid unnecessary loops when already finished
+
+            for (int i = low; i <= high; i++) 
+            { 
+                swapped = false; // reset swapped each pass
+
+                for (int j = low; j <= high - i - 1; j++)
+                {
+                    int currentElement = this.array[j];
+                    int nextElement = this.array[j + 1];
+
+                    if (currentElement > nextElement)
+                    {
+                        // Swap elements
+                        this.array[j] = nextElement;
+                        this.array[j + 1] = currentElement;
+
+                        swapped = true; // set true when swap happened
+                    }
+                }
+
+                if (!swapped)
+                {
+                    break;
+                }
+            }
         }    
     }
 }
