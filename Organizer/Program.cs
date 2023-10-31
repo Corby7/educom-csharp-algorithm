@@ -18,6 +18,38 @@ namespace Organizer
             ShiftHighestSort shiftHighestSort = new ShiftHighestSort();
             List<int> sortedRandomList = shiftHighestSort.Sort(unsortedRandomList);
             ShowList("Sorted RandomList", sortedRandomList);
+
+            if (CheckSort(unsortedRandomList))
+            {
+                Console.WriteLine("Checksort unsorted list is true");
+            } else
+            {
+                Console.WriteLine("Checksort unsorted list is false");
+            }
+
+            if (CheckSort(sortedRandomList))
+            {
+                Console.WriteLine("Checksort sorted list is true");
+            }
+            else
+            {
+                Console.WriteLine("Checksort sorted list is false");
+            }
+        }
+
+        public static bool CheckSort(List<int> sortedList)
+        {
+            for (int i = 0; i < sortedList.Count - 1; i++)
+            {
+                int currentElement = sortedList[i];
+                int nextElement = sortedList[i + 1];
+                
+                if (currentElement > nextElement)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         public static List<int> RandomList(int amount)
