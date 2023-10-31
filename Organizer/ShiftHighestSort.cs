@@ -14,10 +14,10 @@ namespace Organizer
         /// <returns>The sorted array</returns>
         public List<int> Sort(List<int> input)
         {
-            array = new List<int>(input);
+            this.array = new List<int>(input);
 
             SortFunction(0, array.Count - 1);
-            return array;
+            return this.array;
         }
 
         /// <summary>
