@@ -10,6 +10,29 @@ namespace Organizer
             // Press <F5> to run this code, when "Hello World!" appears in a black box, remove the line below and write your code below.
             Console.WriteLine("Hello World!");
             ShowList("Example of ShowList", new List<int>() { -33, 3, 2, 2, 3, 34, 34, 32, 1, 3, 5, 3, -22, -99, 33, -22, 11, 3, 33, 12, -2, -21, 4, 34, 22, 15, 34,-22 });
+            RandomList(40);
+        }
+
+        public static void RandomList(int amount)
+        {
+            
+            var emptyList = new List<int>();
+            Random rnd = new Random();
+
+            // Add a random number between -99 and 99 to the list, repeat $amount of times
+            for (int i = 0; i < amount; i++) 
+            {
+                emptyList.Add(rnd.Next(-99, 99));
+            }
+
+            // Print the generated list
+            Console.WriteLine();
+            Console.WriteLine("Random List:");
+            foreach (int number in emptyList)
+            {
+                Console.Write(string.Format("{0,3}, ", number));
+            }
+            Console.WriteLine();
         }
 
 
