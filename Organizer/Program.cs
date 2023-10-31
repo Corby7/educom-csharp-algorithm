@@ -10,12 +10,16 @@ namespace Organizer
             // Press <F5> to run this code, when "Hello World!" appears in a black box, remove the line below and write your code below.
             Console.WriteLine("Hello World!");
             ShowList("Example of ShowList", new List<int>() { -33, 3, 2, 2, 3, 34, 34, 32, 1, 3, 5, 3, -22, -99, 33, -22, 11, 3, 33, 12, -2, -21, 4, 34, 22, 15, 34,-22 });
-            RandomList(40);
+            RandomList(302);
         }
 
         public static void RandomList(int amount)
         {
-            
+            if (amount > 100)
+            {
+                amount = 300; // Do not show more than 300 numbers
+            }
+
             var emptyList = new List<int>();
             Random rnd = new Random();
 
