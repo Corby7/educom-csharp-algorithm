@@ -16,9 +16,14 @@ namespace Organizer
             ShowList("Unsorted RandomList", unsortedRandomList);
 
             ShiftHighestSort shiftHighestSort = new ShiftHighestSort();
-            List<int> sortedRandomList = shiftHighestSort.Sort(unsortedRandomList);
-            ShowList("Sorted RandomList", sortedRandomList);
+            List<int> sortedRandomList1 = shiftHighestSort.Sort(unsortedRandomList);
+            ShowList("Sorted RandomList (shift highest sort)", sortedRandomList1);
 
+            RotateSort rotateSort = new RotateSort();
+            List<int> sortedRandomList2 = rotateSort.Sort(unsortedRandomList);
+            ShowList("Sorted RandomList (rotate sort)", sortedRandomList2);
+
+            Console.WriteLine();
             if (CheckSort(unsortedRandomList))
             {
                 Console.WriteLine("Checksort unsorted list is true");
@@ -27,7 +32,8 @@ namespace Organizer
                 Console.WriteLine("Checksort unsorted list is false");
             }
 
-            if (CheckSort(sortedRandomList))
+            Console.WriteLine();
+            if (CheckSort(sortedRandomList1))
             {
                 Console.WriteLine("Checksort sorted list is true");
             }
