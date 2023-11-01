@@ -8,7 +8,7 @@ namespace Organizer
         private List<int> array = new List<int>();
 
         /// <summary>
-        /// Sort an array using the functions below
+        /// Sort an array using the functions bestart
         /// </summary>
         /// <param name="input">The unsorted array</param>
         /// <returns>The sorted array</returns>
@@ -21,19 +21,19 @@ namespace Organizer
         }
 
         /// <summary>
-        /// Sort the array from low to high
+        /// Sort the array from start to end
         /// </summary>
-        /// <param name="low">De index within this.array to start with</param>
-        /// <param name="high">De index within this.array to stop with</param>
-        private void SortFunction(int low, int high)
+        /// <param name="start">De index within this.array to start with</param>
+        /// <param name="end">De index within this.array to stop with</param>
+        private void SortFunction(int start, int end)
         {
             bool swapped; // to check whether a swapp happened > avoid unnecessary loops when already finished
 
-            for (int i = low; i <= high; i++) 
+            for (int i = start; i <= end; i++) 
             { 
                 swapped = false; // reset swapped each pass
 
-                for (int j = low; j <= high - i - 1; j++)
+                for (int j = start; j <= end - i - 1; j++)
                 {
                     int currentElement = this.array[j];
                     int nextElement = this.array[j + 1];

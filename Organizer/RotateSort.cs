@@ -24,18 +24,18 @@ namespace Organizer
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="low">De index within this.array to start with</param>
-        /// <param name="high">De index within this.array to stop with</param>
-        private void SortFunction(int low, int high)
+        /// <param name="start">De index within this.array to start with</param>
+        /// <param name="end">De index within this.array to stop with</param>
+        private void SortFunction(int start, int end)
         {
-            if (high <= low)
+            if (end <= start)
             {
                 return; // stop if 1 or less items in array
             }
 
-            int pivot = Partitioning(low, high);
-            SortFunction(low, pivot - 1);
-            SortFunction(pivot + 1, high);
+            int pivot = Partitioning(start, end);
+            SortFunction(start, pivot - 1);
+            SortFunction(pivot + 1, end);
 
         }
 
@@ -43,14 +43,14 @@ namespace Organizer
         /// Partition the array in a group 'low' digits (e.a. lower than a choosen pivot) and a group 'high' digits
         /// </summary>
         /// <param name="low">De index within this.array to start with</param>
-        /// <param name="high">De index within this.array to stop with</param>
+        /// <param name="end">De index within this.array to stop with</param>
         /// <returns>The index in the array of the first of the 'high' digits</returns>
-        private int Partitioning(int low, int high)
+        private int Partitioning(int start, int end)
         {
-            int pivot = this.array[high];
-            int i = low - 1;
+            int pivot = this.array[end];
+            int i = start - 1;
 
-            for (int j = low; j <= high - 1; j++) 
+            for (int j = start; j <= end - 1; j++) 
             {
                 if (this.array[j] < pivot)
                 {
@@ -60,14 +60,12 @@ namespace Organizer
                     this.array[i] = this.array[j];
                     this.array[j] = temp;
                 }
-
-                i++; // now at position of pivot (i + 1)
-                int pivotSpot = this.array[i];
-                array[i] = this.array[high];
-                this.array[high] = pivotSpot; // places the pivot (which was at the end of the array) on its correct pivotspot
             }
+            int pivotSpot = this.array[i + 1]; // position of pivot at (i + 1)
+            array[i + 1] = this.array[end];
+            this.array[end] = pivotSpot; // places the pivot (which was at the end of the array) on its correct pivotspot
 
-            return i; 
+            return i + 1; // return location of pivot
         }
     }
 }
