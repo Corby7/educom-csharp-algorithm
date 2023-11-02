@@ -8,6 +8,13 @@ namespace BornToMove
     {
         static void Main(string[] args)
         {
+            Console.WriteLine();
+            var connection = new DBConnect();
+            int id = Randomizer(connection);
+            Console.WriteLine("Randomly selected exercise ID: " + id);
+
+
+
             bool validOptionSelected = false;
 
             Console.WriteLine("Hi there! You have been inactive for too long, it's time to start moving!");
@@ -46,13 +53,26 @@ namespace BornToMove
                     Console.WriteLine();
                     Console.WriteLine("Invalid input. Please enter a valid number.");
                 }
-
-          
-
             }
 
-
-
         }
+
+        public static int Randomizer(DBConnect connection)
+        {
+            List<int> Ids = connection.getAllIds();
+
+            if (Ids.Count > 0)
+            {
+                Random random = new Random();
+                int index = random.Next(Ids.Count);
+                int randomExerciseId = Ids[index];
+                return randomExerciseId;
+            }
+            else
+            {
+                return -1; // if no values in Ids
+            }
+        }
+
     }
 }
