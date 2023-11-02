@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -87,6 +88,8 @@ namespace BornToMove
             {
                 string query = "SELECT id FROM move";
 
+                //maybe use using to close?
+
                 try
                 {
                     //Create command
@@ -116,5 +119,55 @@ namespace BornToMove
 
             return idList;
         }
+
+        public Dictionary<int, Move> getExercise(int exerciseId)
+        { 
+            Dictionary<int, Move> exerciseArray = new Dictionary<int, Move>();
+            
+            if (this.OpenConnection())
+            {
+                string query = "SELECT * FROM move WHERE id = @exerciseId";
+
+                try
+                {
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    cmd.Parameters.AddWithValue("@exerciseId", exerciseId);
+                    MySqlDataReader dataReader = cmd.ExecuteReader();
+
+                    while (dataReader.Read())
+                    {
+                        int id = dataReader.GetInt32("id");
+                        string name = dataReader.GetString("name");
+                        string description = dataReader.GetString("description");
+                        int sweatrate = dataReader.GetInt32("sweatrate");
+                        exerciseArray.Add(id, new Move(id, name, description, sweatrate));
+                    }
+
+                    dataReader.Close();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error reading data: " + ex.Message);
+                }
+                finally
+                {
+                    this.CloseConnection();
+                }
+            }
+
+            return exerciseArray;
+        }
+
+
+
+
+
+
+
+
+
+
+
     }
+    
 }
