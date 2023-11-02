@@ -7,7 +7,7 @@ using MySql.Data.MySqlClient;
 
 namespace BornToMove
 {
-    public class DBconnect
+    public class DBConnect
     {
 
         private MySqlConnection connection;
@@ -25,7 +25,7 @@ namespace BornToMove
         private void Initialize()
         {
             server = "localhost";
-            database = "move";
+            database = "born2move";
             uid = "WebShopUser";
             password = "1234";
             string connectionString;
@@ -36,7 +36,7 @@ namespace BornToMove
         }
 
         //open connection to database
-        private bool OpenConnection()
+        public bool OpenConnection()
         {
             try
             {
@@ -45,8 +45,7 @@ namespace BornToMove
             }
             catch (MySqlException ex)
             {
-                //When handling errors, you can your application's response based 
-                //on the error number.
+                //When handling errors, you can use your application's response based on the error number.
                 //The two most common error numbers when connecting are as follows:
                 //0: Cannot connect to server.
                 //1045: Invalid user name and/or password.
@@ -65,7 +64,7 @@ namespace BornToMove
         }
 
         //Close connection
-        private bool CloseConnection()
+        public bool CloseConnection()
         {
             try
             {
@@ -79,5 +78,43 @@ namespace BornToMove
             }
         }
 
+        public List<int> getAllIds()
+        {
+            List<int> idList = new List<int>();
+
+            //Open connection
+            if (this.OpenConnection())
+            {
+                string query = "SELECT id FROM move";
+
+                try
+                {
+                    //Create command
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    //Create a data reader and Execute the command
+                    MySqlDataReader dataReader = cmd.ExecuteReader();
+                    
+                    // Read the data and store them in the list
+                    while (dataReader.Read())
+                    {
+                        int id = Convert.ToInt32(dataReader["id"]);
+                        idList.Add(id);
+                    }
+
+                    //close Data Reader
+                    dataReader.Close();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error reading data: " + ex.Message);
+                }
+                finally
+                {
+                    this.CloseConnection();
+                }
+            }
+
+            return idList;
+        }
     }
 }
