@@ -79,6 +79,36 @@ namespace BornToMove
             }
         }
 
+        public bool nameExists(string name)
+        {
+            if (this.OpenConnection())
+            {
+                string query = "SELECT name FROM move WHERE name = @name";
+
+                try
+                {
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    cmd.Parameters.AddWithValue("@name", name);
+                    
+                    using (MySqlDataReader dataReader = cmd.ExecuteReader()) // apply using to other queries too!!!
+                    {
+                        return dataReader.Read();
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error reading data: " + ex.Message);
+                }
+                finally
+                {
+                    this.CloseConnection();
+                }
+            }
+
+            return false;
+        }
+
         public List<int> getAllIds()
         {
             List<int> idList = new List<int>();
@@ -156,6 +186,79 @@ namespace BornToMove
             }
 
             return exerciseArray;
+        }
+
+        public int saveExercise(string name, string description, int sweatrate)
+        {
+            int rowsAffected = 0;
+
+            if (this.OpenConnection())
+            {
+                string query = "INSERT INTO move (name, description, sweatrate) VALUES (@name, @description, @sweatrate)";
+
+                try
+                {
+                    using (MySqlCommand cmd = new MySqlCommand(query, connection))
+
+                    {
+                        cmd.Parameters.AddWithValue("@name", name);
+                        cmd.Parameters.AddWithValue("@description", description);
+                        cmd.Parameters.AddWithValue("@sweatrate", sweatrate);
+
+                        rowsAffected = cmd.ExecuteNonQuery();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error reading data: " + ex.Message);
+                }
+                finally
+                {
+                    this.CloseConnection();
+                }
+            }
+
+            return rowsAffected;
+        }
+
+
+        public Dictionary<int, Tuple<string, int>> getExercices()
+        {
+            Dictionary<int, Tuple<string, int>> exerciseList = new Dictionary<int, Tuple<string,int>>();
+
+            //Open connection
+            if (this.OpenConnection())
+            {
+                string query = "SELECT id, name, sweatrate FROM move";
+
+                try
+                {
+                    MySqlCommand cmd = new MySqlCommand(query, connection);
+                    MySqlDataReader dataReader = cmd.ExecuteReader();
+
+                    // Read the data and store them in the list
+                    while (dataReader.Read())
+                    {
+                        int id = dataReader.GetInt32("id");
+                        string name = dataReader.GetString("name");
+                        int sweatrate = dataReader.GetInt32("sweatrate");
+                        exerciseList.Add(id, new Tuple<string, int>(name, sweatrate));
+                    }
+
+                    //close Data Reader
+                    dataReader.Close();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error reading data: " + ex.Message);
+                }
+                finally
+                {
+                    this.CloseConnection();
+                }
+            }
+
+            return exerciseList;
         }
 
 
