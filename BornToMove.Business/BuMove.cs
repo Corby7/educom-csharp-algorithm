@@ -1,13 +1,22 @@
 ﻿using System.Text.RegularExpressions;
-/*using BornToMove;*/
+using BornToMove.DAL;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace BornToMove.Business
 {
     public class BuMove
     {
-        public static int Randomizer(DBConnect connection)
+        private readonly MoveCrud crud;
+
+        public BuMove()
         {
-            List<int> Ids = connection.getAllIds();
+            var context = new MoveContext();
+            this.crud = new MoveCrud(context);
+        }
+
+        public int Randomizer()
+        {
+            List<int> Ids = crud.readAllMoveIds() ?? new List<int>();
 
             if (Ids.Count > 0)
             {
@@ -33,31 +42,35 @@ namespace BornToMove.Business
             return input >= 1 && input <= 5;
         }
 
-        public static void DisplayExercises(Dictionary<int, Move> exerciseArray)
+        public void getExercise(int id)
         {
-            foreach (var kvp in exerciseArray)
-            {
-                int exerciseId = kvp.Key;
-                Move exercise = kvp.Value;
+            Move? exercise = crud.readMoveById(id);
 
-                Console.WriteLine($"Exercise: {exercise.Name}");
+            if (exercise != null)
+            {
+                Console.WriteLine($"Exercise: {exercise.Name}"); //dit nog verplaatsen uit business layer
                 Console.WriteLine($"Description: {exercise.Description}");
                 Console.WriteLine($"Sweat Rate: {exercise.SweatRate}");
-                Console.WriteLine();
+            }
+            else
+            {
+                Console.WriteLine("Exercise not found");
             }
         }
 
-        public static void DisplayExerciseList(Dictionary<int, Tuple<string, int>> exerciseList)
+        public Dictionary<int, Move> getExerciseList()
         {
-            int i = 0;
-            foreach (KeyValuePair<int, Tuple<string, int>> exerciseEntry in exerciseList)
+            Dictionary<int, Move>? exerciseList = crud.readAllMoves();
+
+            if (exerciseList != null)
             {
-                int exerciseId = exerciseEntry.Key;
-                string exerciseName = exerciseEntry.Value.Item1;
-                int sweatRate = exerciseEntry.Value.Item2;
-                Console.WriteLine($"[{exerciseId}]: {exerciseName}, sweatrate: {sweatRate}");
-                i++;
+                return exerciseList;
             }
+            else
+            {
+                return new Dictionary<int, Move>();
+            }
+
         }
 
         public static void AskForRatings()
