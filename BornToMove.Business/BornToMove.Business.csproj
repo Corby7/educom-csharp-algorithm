@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BornToMove\BornToMove.csproj" />
+    <ProjectReference Include="..\BornToMove.DAL\BornToMove.DAL.csproj" />
   </ItemGroup>
 
 </Project>
