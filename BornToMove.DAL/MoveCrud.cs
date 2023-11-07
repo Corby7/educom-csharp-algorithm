@@ -89,7 +89,7 @@ namespace BornToMove.DAL
             }
         }
 
-        public List<int>? readMoveIds()
+        public List<int>? readAllMoveIds()
         {
             try
             {
