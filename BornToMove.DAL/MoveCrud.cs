@@ -11,78 +11,45 @@ namespace BornToMove.DAL
 
     public class MoveCrud
     {
-        /*public create(Move move)
-        {
+        private readonly MoveContext context;
 
+        public MoveCrud(MoveContext context)
+        {
+            this.context = context;
         }
 
-        public update(Move updated Move)
+        public void createMove(Move newmove)
         {
-
+            context.Move.Add(newmove);
+            context.SaveChanges();
         }
 
-        public delete(int id)
+        public void updateMove(Move updatedMove)
         {
-
+            context.Move.Update(updatedMove);
+            context.SaveChanges();
         }
 
-        public readMoveById(int id)
+        public void deleteMove(int id)
         {
+            var movement = context.Move.Find(id);
 
-        }
-
-        public readAllMoves()
-        {
-
-        }*/
-        /*    public Dictionary<int, Move> readMoveById(int id)
+            if (movement != null )
             {
-                using var context = new MoveContext();
-
-                var move = from move in context.Move
-                           where move.Id == id
-                           select move;
-
-            }*/
-
-        public void delete(int id)
-        {
-            using var context = new MoveContext();
-
-            context.Remove(id);
-        }
-
-        public Dictionary<int, Move> readMoveById(int id)
-        {
-            using var context = new MoveContext(); //using naar buiten halen?
-
-            var movement = from move in context.Move
-                           where move.Id == id
-                            select move;
-
-            Dictionary<int, Move> result = movement.ToDictionary(m => m.Id, m => m);
-
-            return result;
-        }
-
-
-        public void readAllMoves()
-        {
-            using var context = new MoveContext();
-
-            var movements = from move in context.Move
-                            select move;
-
-            /*return movements;*/
-
-            foreach (Move m in movements)
-            {
-                Console.WriteLine($"Id: {m.Id}");
-                Console.WriteLine($"Name: {m.Name}");
-                Console.WriteLine($"Description: {m.Description}");
-                Console.WriteLine($"Sweatrate: {m.SweatRate}");
-                Console.WriteLine();
+                context.Move.Remove(movement);
+                context.SaveChanges();
             }
+        }
+
+        public Move? readMoveById(int id)
+        {
+            return context.Move.Find(id);
+        }
+
+
+        public Dictionary<int, Move>? readAllMoves()
+        {
+            return context.Move.ToDictionary(move => move.Id, move => move);         
         }
 
 
