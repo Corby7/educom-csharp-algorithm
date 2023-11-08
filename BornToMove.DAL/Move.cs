@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BornToMove
+namespace BornToMove.DAL
 {
     public class Move
     {
@@ -13,14 +14,8 @@ namespace BornToMove
         public string Description { get; set; } = null!;
         public int SweatRate { get; set; }
 
-    /*    public Move(int id, string name, string description, int sweatrate)
-        {
-            Id = id;
-            Name = name;
-            Description = description;
-            SweatRate = sweatrate;
-        }
-            */
+        virtual public ICollection<MoveRating> Ratings { get; set; }
+
     }
 }
 
