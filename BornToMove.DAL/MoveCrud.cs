@@ -18,7 +18,7 @@ namespace BornToMove.DAL
             this.context = context;
         }
 
-        public void createMove(Move newMove)
+        public void CreateMove(Move newMove)
         {
             try
             {
@@ -31,7 +31,7 @@ namespace BornToMove.DAL
             }
         }
 
-        public void updateMove(Move updatedMove)
+        public void UpdateMove(Move updatedMove)
         {
             try
             {
@@ -44,7 +44,7 @@ namespace BornToMove.DAL
             }
         }
 
-        public void deleteMove(int id)
+        public void DeleteMove(int id)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace BornToMove.DAL
             }
         }
 
-        public Move? readMoveById(int id)
+        public Move? ReadMoveById(int id)
         {
             try
             {
@@ -76,7 +76,7 @@ namespace BornToMove.DAL
         }
 
 
-        public Dictionary<int, Move>? readAllMoves()
+        public Dictionary<int, Move>? ReadAllMoves()
         {
             try
             {
@@ -89,7 +89,7 @@ namespace BornToMove.DAL
             }
         }
 
-        public List<int>? readAllMoveIds()
+        public List<int>? ReadAllMoveIds()
         {
             try
             {
@@ -102,7 +102,7 @@ namespace BornToMove.DAL
             }
         }
 
-        public bool nameExists(string name)
+        public bool NameExists(string name)
         {
             try
             {
