@@ -8,15 +8,16 @@ namespace BornToMove.Business
     {
         private readonly MoveCrud crud;
 
-        public BuMove()
+        public Dictionary<int, Move> exerciseList = new Dictionary<int, Move>();
+
+        public BuMove(MoveCrud crud)
         {
-            var context = new MoveContext();
-            this.crud = new MoveCrud(context);
+            this.crud = crud;
         }
 
-        public int Randomizer()
+        public int GenerateRandomId()
         {
-            List<int> Ids = crud.readAllMoveIds() ?? new List<int>();
+            List<int> Ids = crud.ReadAllMoveIds() ?? new List<int>();
 
             if (Ids.Count > 0)
             {
@@ -31,6 +32,33 @@ namespace BornToMove.Business
             }
         }
 
+        public Move GenerateSuggestion()
+        {
+            int randomId = GenerateRandomId();
+
+            if (randomId > 0)
+            {
+                return GetExercise(randomId);
+            }
+
+            return null;
+        }
+
+        public (bool isValid, string error) IsValidName(string name)
+        {
+            if (!IsValidString(name))
+            {
+                return (false, "name");
+            }
+
+            if (crud.NameExists(name))
+            {
+                return (false, "name exists");
+            }
+
+            return (true, string.Empty);
+        }
+
         public static bool IsValidString(string input)
         {
             string pattern = @"^[A-Za-z\s]+$"; // Allows only letters and spaces
@@ -42,35 +70,25 @@ namespace BornToMove.Business
             return input >= 1 && input <= 5;
         }
 
-        public void getExercise(int id)
+        public Move GetExercise(int id)
         {
-            Move? exercise = crud.readMoveById(id);
-
-            if (exercise != null)
-            {
-                Console.WriteLine($"Exercise: {exercise.Name}"); //dit nog verplaatsen uit business layer
-                Console.WriteLine($"Description: {exercise.Description}");
-                Console.WriteLine($"Sweat Rate: {exercise.SweatRate}");
-            }
-            else
-            {
-                Console.WriteLine("Exercise not found");
-            }
+            return crud.ReadMoveById(id);
         }
 
-        public Dictionary<int, Move> getExerciseList()
+        public void GetExerciseList()
         {
-            Dictionary<int, Move>? exerciseList = crud.readAllMoves();
-
-            if (exerciseList != null)
+            Dictionary<int, Move>? movements = crud.ReadAllMoves();
+            
+            if (movements != null)
             {
-                return exerciseList;
-            }
-            else
-            {
-                return new Dictionary<int, Move>();
-            }
+                foreach (var kvp in movements)
+                {
+                    int exerciseId = kvp.Key;
+                    Move exercise = kvp.Value;
 
+                    exerciseList.Add(exerciseId, exercise);
+                }
+            }
         }
 
         public static void AskForRatings()
@@ -80,6 +98,11 @@ namespace BornToMove.Business
             Console.WriteLine("On a scale from 1-5, how do you rate this exercise?");
             Console.WriteLine("And on a scale from 1-5, how intense was this exercise?");
             Console.WriteLine();
+        }
+
+        public void SaveMove (Move newMove)
+        {
+            crud.CreateMove(newMove);
         }
 
           
