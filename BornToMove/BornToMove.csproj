@@ -8,6 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="DBconnect.cs" />
+    <Compile Remove="Move.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MySql.Data" Version="8.2.0" />
   </ItemGroup>
 
