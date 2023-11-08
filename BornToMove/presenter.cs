@@ -1,4 +1,5 @@
 ﻿using BornToMove.Business;
+using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,37 +10,30 @@ namespace BornToMove
 {
     public class Presenter
     {
+        private View view;
         private BuMove buMove;
 
-        public Presenter(BuMove buMove) {
+        public Presenter(View view, BuMove buMove) {
+            this.view = view;
             this.buMove = buMove;
         }
-
-        public static void welcomeMessage() //naar view verplaatsen
+        
+        public void RunProgram()
         {
-            Console.WriteLine();//welcome message
-            Console.WriteLine("Welcome to BornToMove!");
-            Console.WriteLine();
-            Console.WriteLine("Looks like you have been inactive for too long, it's time to start moving!");
-            Console.WriteLine();
+            view.WelcomeMessage();
+            
+            view.AskInitialChoice();
+            GetInitialChoice();
         }
 
-        public static void askInitialChoice()
-        {
-            Console.WriteLine("Which option do you prefer?");//ask initial choice
-            Console.WriteLine();
-            Console.WriteLine("Press [1] for an exercise suggestion.");
-            Console.WriteLine("Press [2] to choose from a list with exercises.");
-            Console.WriteLine();
-        }
 
-        public void getInitialChoice()
+        public void GetInitialChoice()
         {
             bool validOptionSelected = false;
 
             while (!validOptionSelected)
             {
-                Console.WriteLine("Press number key, followed by 'Enter' to continue: ");//getuserchoice
+                view.AskNumberKey();
 
                 if (int.TryParse(Console.ReadLine(), out int key))
                 {
@@ -58,62 +52,37 @@ namespace BornToMove
 
                             secondInitialOption();
                             getChoiceFromList();
+                            validOptionSelected = true;
                             break;
 
                         default:
-                            Console.WriteLine("--- Please choose option 1 or 2; try again. ---");
-                            Console.WriteLine();
+                            view.InvalidError("option");
                             break;
 
                     }
                 }
                 else
                 {
-                    Console.WriteLine();
-                    Console.WriteLine("--- Invalid input. Please enter a valid number. ---");
+                    view.InvalidError("input");
                 }
             }
         }
 
         public void firstInitialOption()
         {
-            Console.WriteLine("--- You opted for an exercise suggestion (option [1]) ---");
+            Move exercise = buMove.GenerateSuggestion();
 
-            int id = buMove.Randomizer();
-
-            Console.WriteLine();
-            Console.WriteLine("Randomly selected exercise ID: " + id);
-            Console.WriteLine();
-            Console.WriteLine($"Suggested Exercise: {id}");
-            Console.WriteLine();
-
-            buMove.getExercise(id);
-
-            Console.WriteLine();
+            view.DisplaySuggestion(exercise);
 
             BuMove.AskForRatings();
         }
 
         public void secondInitialOption()
         {
-            Console.WriteLine("--- You opted to choose from a list with exercices (option [2]) ---");
-            Console.WriteLine();
-            Console.WriteLine("Exercises to choose from: ");
-            Console.WriteLine();
-            Console.WriteLine("[0]: --- add your own exercise ---");
+            buMove.GetExerciseList();
+            Dictionary<int, Move> exerciseList = buMove.exerciseList;
 
-            Dictionary<int, Move> exerciseList = buMove.getExerciseList();
-            
-            foreach (var kvp in exerciseList)
-            {
-                int exerciseId = kvp.Key;
-                Move exercise = kvp.Value;
-
-                Console.WriteLine($"[{exerciseId}]: {exercise.Name}, sweatrate: {exercise.SweatRate}");
-            }
-
-            Console.WriteLine();
-
+            view.DisplayChoices(exerciseList);
         }
 
         public void getChoiceFromList()
@@ -122,34 +91,95 @@ namespace BornToMove
 
             while (!validOptionSelected)
             {
-                Console.WriteLine("Press number key of the option you want to choose, followed by 'Enter' to continue: ");//get user choice
+                view.AskNumberKey();
 
                 if (int.TryParse(Console.ReadLine(), out int selectedExerciseId))
                 {
-                    switch (selectedExerciseId)
+                    if (selectedExerciseId == 0)
                     {
-                        case 0:
-                            break;
+                        UserAddMove();
+                    }
+                    else if (buMove.exerciseList.TryGetValue(selectedExerciseId, out Move selectedExercise))
+                    {
+                        validOptionSelected = true;
+                        Move exercise = buMove.GetExercise(selectedExerciseId);
 
-                        case 1:
-                            break;
+                        view.DisplayChosenExercise(exercise);
 
-                        default:
-                            Console.WriteLine();
-                            Console.WriteLine("--- Exercise not found in list, try again. ---");
-                            break;
+                        BuMove.AskForRatings();
+                    }
+                    else
+                    {
+                        view.InvalidError("not found");
                     }
                 }
                 else
                 {
-                    Console.WriteLine();
-                    Console.WriteLine("--- Invalid input. Please enter a valid number. ---");
+                    view.InvalidError("input");
                 }
             }
         }
 
+        public void UserAddMove()
+        {
+            string name = GetMoveName();
+            string description = GetMoveDescription();
+            int sweatrate = GetMoveSweatrate();
 
+            buMove.SaveMove(new Move()
+            {
+                Name = name,
+                Description = description,
+                SweatRate = sweatrate
+            });
+        }
 
+        private string GetMoveName()
+        {
+            view.AskInput("Type the name of the exercise you want to add");
+            string name = Console.ReadLine();
+
+            var nameCheck = buMove.IsValidName(name);
+
+            while (!nameCheck.isValid)
+            {
+                view.InvalidError(nameCheck.error);
+                name = Console.ReadLine();
+
+                nameCheck = buMove.IsValidName(name);
+            }
+      
+            return name;
+        }
+
+        private string GetMoveDescription()
+        {
+            view.AskInput("Type a description of the exercise");
+            string description = Console.ReadLine();
+
+            while(!BuMove.IsValidString(description))
+            {
+                view.InvalidError("description");
+                description = Console.ReadLine();
+            }
+
+            return description;
+        }
+
+        private int GetMoveSweatrate()
+        {
+            view.AskInput("Type the sweatrate of your exercise on a scale from 1-5 (integers)");
+            int sweatrate = Convert.ToInt16(Console.ReadLine());
+
+            while (!BuMove.IsValidRate(sweatrate))
+            {
+                view.InvalidError("sweatrate");
+
+                sweatrate = Convert.ToInt16(Console.ReadLine());
+            }
+
+            return sweatrate;
+        }
 
     }
 }
