@@ -3,6 +3,7 @@ using BornToMove.DAL;
 using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,8 +12,8 @@ namespace BornToMove
 {
     public class Presenter
     {
-        private View view;
-        private BuMove buMove;
+        private readonly View view;
+        private readonly BuMove buMove;
 
         public Presenter(View view, BuMove buMove) {
             this.view = view;
@@ -21,6 +22,8 @@ namespace BornToMove
         
         public void RunProgram()
         {
+            buMove.FillEmptyDB();
+
             view.WelcomeMessage();
             
             view.AskInitialChoice();
@@ -36,23 +39,23 @@ namespace BornToMove
             {
                 view.AskNumberKey();
 
-                if (int.TryParse(Console.ReadLine(), out int key))
+                if (int.TryParse(Console.ReadLine(), out int keyinput))
                 {
                     Console.WriteLine();
 
-                    switch (key)
+                    switch (keyinput)
                     {
                         case 1:
 
                             validOptionSelected = true;
-                            firstInitialOption();
+                            FirstInitialOption();
 
                             break;
 
                         case 2:
 
-                            secondInitialOption();
-                            getChoiceFromList();
+                            SecondInitialOption();
+                            GetChoiceFromList();
                             validOptionSelected = true;
                             break;
 
@@ -69,45 +72,47 @@ namespace BornToMove
             }
         }
 
-        public void firstInitialOption()
+        public void FirstInitialOption()
         {
-            Move exercise = buMove.GenerateSuggestion();
+            buMove.GenerateRandomSuggestion();
+            
+            view.DisplayExercise(buMove.SelectedMove, buMove.SelectedMoveRating, "suggestion");
 
-            view.DisplaySuggestion(exercise);
-
-            BuMove.AskForRatings();
+            AskForRatings();
         }
 
-        public void secondInitialOption()
+        public void SecondInitialOption()
         {
             buMove.GetExerciseList();
-            Dictionary<int, Move> exerciseList = buMove.exerciseList;
 
-            view.DisplayChoices(exerciseList);
+            view.DisplayChoices(buMove.ExerciseList);
         }
 
-        public void getChoiceFromList()
+        public void GetChoiceFromList()
         {
             bool validOptionSelected = false;
 
+            view.AskNumberKey();
+
             while (!validOptionSelected)
             {
-                view.AskNumberKey();
-
                 if (int.TryParse(Console.ReadLine(), out int selectedExerciseId))
                 {
                     if (selectedExerciseId == 0)
                     {
                         UserAddMove();
+
+                        //succesfully added exercise message
                     }
-                    else if (buMove.exerciseList.TryGetValue(selectedExerciseId, out Move selectedExercise))
+                    else if (buMove.ExerciseList.TryGetValue(selectedExerciseId, out Move selectedExercise))
                     {
                         validOptionSelected = true;
-                        Move exercise = buMove.GetExercise(selectedExerciseId);
+                        
+                        buMove.GetExercise(selectedExerciseId);
 
-                        view.DisplayChosenExercise(exercise);
+                        view.DisplayExercise(buMove.SelectedMove, buMove.SelectedMoveRating, "list");
 
-                        BuMove.AskForRatings();
+                        AskForRatings();
                     }
                     else
                     {
@@ -127,12 +132,7 @@ namespace BornToMove
             string description = GetMoveDescription();
             int sweatrate = GetMoveSweatrate();
 
-            buMove.SaveMove(new Move()
-            {
-                Name = name,
-                Description = description,
-                SweatRate = sweatrate
-            });
+            buMove.SaveMove(name, description, sweatrate);
         }
 
         private string GetMoveName()
@@ -170,16 +170,66 @@ namespace BornToMove
         private int GetMoveSweatrate()
         {
             view.AskInput("Type the sweatrate of your exercise on a scale from 1-5 (integers)");
-            int sweatrate = Convert.ToInt16(Console.ReadLine());
 
-            while (!BuMove.IsValidRate(sweatrate))
+            while (true)
             {
-                view.InvalidError("sweatrate");
-
-                sweatrate = Convert.ToInt16(Console.ReadLine());
+                if (int.TryParse(Console.ReadLine(), out int sweatrate) && BuMove.IsValidRateInt(sweatrate))
+                {
+                    return sweatrate;
+                }
+                else
+                {
+                    view.InvalidError("sweatrate");
+                }
             }
+        }
 
-            return sweatrate;
+        private void AskForRatings()
+        {
+            double rating = AskRating();
+            Console.WriteLine();
+            double vote = AskIntensityVote();
+            buMove.SaveMoveRating(rating, vote);
+        }
+
+        private double AskRating()
+        {
+            Console.WriteLine("Congratulations, you finished the exercise!");
+            Console.WriteLine("On a scale from 1-5, how much did you like this exercise?");
+            view.AskInput("Type a number to rate this exercise on a scale from 1.0-5.0 (1 decimal allowed)");
+
+            while (true)
+            {
+                if (double.TryParse(Console.ReadLine(), NumberStyles.Float, CultureInfo.InvariantCulture, out double rating) && BuMove.IsValidRateDouble(rating))
+                {
+                    return rating;
+                }
+                else
+                {
+                    Console.WriteLine($"input: {rating}");
+                    view.InvalidError("rating");
+                }
+            }
+        }
+
+        //decimal double have to fix.
+
+        private double AskIntensityVote()
+        {
+            Console.WriteLine("And on a scale from 1-5, how intense did you find exercise?");
+            view.AskInput("Type a number to rate the intensity of this exercise on a scale from 1.0-5.0 (1 decimal allowed)");
+
+            while (true)
+            {
+                if (double.TryParse(Console.ReadLine(), NumberStyles.Float, CultureInfo.InvariantCulture, out double vote) && BuMove.IsValidRateDouble(vote))
+                {
+                    return vote;
+                }
+                else
+                {
+                    view.InvalidError("rating");
+                }
+            }
         }
 
     }

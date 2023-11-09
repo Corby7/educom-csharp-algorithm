@@ -7,41 +7,41 @@ namespace BornToMove.Business
     public class BuMove
     {
         private readonly MoveCrud crud;
+        public Move SelectedMove { get; set; }
 
-        public Dictionary<int, Move> exerciseList = new Dictionary<int, Move>();
+        public double SelectedMoveRating { get; set; }
+
+        public Dictionary<int, Move> ExerciseList = new Dictionary<int, Move>();
 
         public BuMove(MoveCrud crud)
         {
             this.crud = crud;
         }
 
-        public int GenerateRandomId()
+        public void SetSelectedMove(Move move)
         {
-            List<int> Ids = crud.ReadAllMoveIds() ?? new List<int>();
-
-            if (Ids.Count > 0)
-            {
-                Random random = new Random();
-                int index = random.Next(Ids.Count);
-                int randomExerciseId = Ids[index];
-                return randomExerciseId;
-            }
-            else
-            {
-                return -1; // if no values in Ids
-            }
+            this.SelectedMove = move;
         }
 
-        public Move GenerateSuggestion()
+        private Move GetSelectedMove()
         {
-            int randomId = GenerateRandomId();
+            return SelectedMove;
+        }
 
-            if (randomId > 0)
+        public void GenerateRandomSuggestion()
+        {
+            var moveIds = crud.ReadAllMoveIds();
+
+            if (moveIds != null && moveIds.Count > 0)
             {
-                return GetExercise(randomId);
+                Random random = new Random();
+                int index = random.Next(moveIds.Count);
+                int randomId = moveIds[index];
+
+                SelectedMove = crud.ReadMoveById(randomId);
+                SelectedMoveRating = crud.ReadAverageRatingById(randomId);
             }
 
-            return null;
         }
 
         public (bool isValid, string error) IsValidName(string name)
@@ -65,14 +65,21 @@ namespace BornToMove.Business
             return !string.IsNullOrEmpty(input) && Regex.IsMatch(input, pattern) && input.Length > 4;
         }
 
-        public static bool IsValidRate(int input)
+        public static bool IsValidRateInt(int input)
         {
             return input >= 1 && input <= 5;
         }
 
-        public Move GetExercise(int id)
+        public static bool IsValidRateDouble(double input)
         {
-            return crud.ReadMoveById(id);
+            return (input >= 1.0 && input <= 5.0);
+        }
+
+
+        public void GetExercise(int id)
+        {
+            SelectedMove = crud.ReadMoveById(id);
+            SelectedMoveRating = crud.ReadAverageRatingById(id);
         }
 
         public void GetExerciseList()
@@ -86,25 +93,76 @@ namespace BornToMove.Business
                     int exerciseId = kvp.Key;
                     Move exercise = kvp.Value;
 
-                    exerciseList.Add(exerciseId, exercise);
+                    ExerciseList.Add(exerciseId, exercise);
                 }
             }
         }
 
-        public static void AskForRatings()
+        public void SaveMove (string name, string description, int sweatrate)
         {
-            //nog functionaliteit toevoegen
-            Console.WriteLine("Congratulations, you finished the exercise!");
-            Console.WriteLine("On a scale from 1-5, how do you rate this exercise?");
-            Console.WriteLine("And on a scale from 1-5, how intense was this exercise?");
-            Console.WriteLine();
+            crud.CreateMove(new Move()
+            {
+                Name = name,
+                Description = description,
+                SweatRate = sweatrate
+            });
         }
 
-        public void SaveMove (Move newMove)
+        public void SaveMoveRating(double rating, double vote)
         {
-            crud.CreateMove(newMove);
+
+            Move selectedMove = GetSelectedMove();
+
+            crud.CreateMoveRating(new MoveRating()
+            {
+                Move = selectedMove,
+                Rating = rating,
+                Vote = vote,
+            });
+
         }
 
+        public void FillEmptyDB()
+        {
+            if (crud.IsMovesTableEmpty())
+            {
+                List<Move> moves = new List<Move>
+                {
+                    new Move
+                    {
+                        Name = "Push Up",
+                        Description = "Ga horizontaal liggen op teentoppen en handen. Laat het lijf langzaam zakken tot de neus de grond bijna raakt. Duw het lijf terug nu omhoog tot de ellebogen bijna gestrekt zijn. Vervolgens weer laten zakken. Doe dit 20 keer zonder tussenpauzes",
+                        SweatRate = 3
+                    },
+                    new Move
+                    {
+                        Name = "Planking",
+                        Description = "Ga horizontaal liggen op teentoppen en onderarmen. Houdt deze positie 1 minuut vast",
+                        SweatRate = 3
+                    },
+                    new Move
+                    {
+                    Name = "Squat",
+                    Description = "Ga staan met gestrekte armen. Zak door de knieën tot de billen de grond bijna raken. Ga weer volledig gestrekt staan. Herhaal dit 20 keer zonder tussenpauzes",
+                    SweatRate = 5
+                    }
+                };
+
+                try
+                {
+                    foreach (Move move in moves)
+                    {
+                        crud.CreateMove(move);
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error adding moves to database: " + ex.Message);
+                }
+
+            }
+        }
           
     }
 }

@@ -29,14 +29,39 @@ namespace BornToMove
             Console.WriteLine();
         }
 
-        public void DisplaySuggestion(Move exercise)
+        public void DisplayExercise(Move exercise, double rating, string type)
         {
-            Console.WriteLine("--- You opted for an exercise suggestion (option [1]) ---");
+            switch(type)
+            {
+                case "suggestion":
+                    Console.WriteLine("--- You opted for an exercise suggestion (option [1]) ---");
+                    break;
+
+                case "list":
+                    Console.WriteLine($"--- You have chosen exercise: {exercise.Id}, {exercise.Name} ---");
+                    break;
+            }
+
             Console.WriteLine();
             Console.WriteLine($"Suggested Exercise: {exercise.Id}, {exercise.Name}");
             Console.WriteLine($"Description: {exercise.Description}");
             Console.WriteLine($"Sweat Rate: {exercise.SweatRate}");
             Console.WriteLine();
+
+            if (rating == 0)
+            {
+                Console.WriteLine("This exercise has not been rated yet");
+            }
+            else
+            {
+                Console.WriteLine($"This exercise has a rating of: {rating}/5");
+            }
+            Console.WriteLine();
+        }
+
+        public void DisplayRating(double rating)
+        {
+            Console.WriteLine($"This exercise has a rating of: {rating}/5");
         }
 
         public void DisplayChoices(Dictionary<int, Move> exerciseList)
@@ -55,18 +80,6 @@ namespace BornToMove
                 Console.WriteLine($"[{exerciseId}]: {exercise.Name}, sweatrate: {exercise.SweatRate}");
             }
 
-            Console.WriteLine();
-        }
-
-        public void DisplayChosenExercise(Move exercise)
-        {
-
-            Console.WriteLine();
-            Console.WriteLine($"--- You have chosen exercise: {exercise.Id}, {exercise.Name} ---");
-            Console.WriteLine();
-            Console.WriteLine($"Suggested Exercise: {exercise.Id}, {exercise.Name}");
-            Console.WriteLine($"Description: {exercise.Description}");
-            Console.WriteLine($"Sweat Rate: {exercise.SweatRate}");
             Console.WriteLine();
         }
 
@@ -101,6 +114,10 @@ namespace BornToMove
 
                 case ("sweatrate"):
                     errortext = "Invalid sweatrate: enter a number from 1 to 5.";
+                    break;
+
+                case ("rating"):
+                    errortext = "Invalid rating: enter a number from 1.0 to 5.0; only 1 decimal allowed.";
                     break;
 
                 case ("input"):
