@@ -115,6 +115,35 @@ namespace BornToMove.DAL
             }
         }
 
+        public bool IsMovesTableEmpty()
+        {
+            try
+            {
+                return !context.Move.Any();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error while checking if database move is empty: " + ex.Message);
+                return false;
+            }
+        }
+
+        public void CreateMoveRating(MoveRating newMoveRating)
+        {
+            context.MoveRating.Add(newMoveRating);
+            context.SaveChanges();
+        }
+
+        public double ReadAverageRatingById(int id)
+        {
+            var ratings = from rating in context.MoveRating
+                          where rating.Move.Id == id
+                          select rating.Rating;
+
+            double averageRating = ratings.DefaultIfEmpty().Average();
+
+            return averageRating;
+        }
 
     }
 }
