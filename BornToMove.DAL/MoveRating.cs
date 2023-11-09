@@ -16,7 +16,5 @@ namespace BornToMove.DAL
 
         public double Vote { get; set; }
 
-
-
     }
 }
