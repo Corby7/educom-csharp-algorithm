@@ -141,8 +141,9 @@ namespace BornToMove.DAL
                           select rating.Rating;
 
             double averageRating = ratings.DefaultIfEmpty().Average();
+            double roundedRating = Math.Round(averageRating, 1);
 
-            return averageRating;
+            return roundedRating;
         }
 
     }
