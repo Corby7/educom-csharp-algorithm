@@ -17,8 +17,7 @@ namespace BornToMove
             MoveContext context = new MoveContext();
             MoveCrud crud = new MoveCrud(context);
             BuMove buMove = new BuMove(crud);
-            View view = new View();
-            Presenter presenter = new Presenter(view, buMove);
+            Presenter presenter = new Presenter(buMove);
 
             presenter.RunProgram();
 
