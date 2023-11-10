@@ -72,7 +72,7 @@ namespace BornToMove.Business
 
         public static bool IsValidRateDouble(double input)
         {
-            return (input >= 1.0 && input <= 5.0);
+            return (input >= 1.0 && input <= 5.0) && Math.Round(input, 1) == input;
         }
 
 
