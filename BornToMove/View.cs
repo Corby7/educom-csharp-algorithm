@@ -11,7 +11,7 @@ namespace BornToMove
 {
     public class View
     {
-        public void WelcomeMessage()
+        public static void WelcomeMessage()
         {
             Console.WriteLine();
             Console.WriteLine("Welcome to BornToMove!");
@@ -20,7 +20,7 @@ namespace BornToMove
             Console.WriteLine();
         }
 
-        public void AskInitialChoice()
+        public static void AskInitialChoice()
         {
             Console.WriteLine("Which option do you prefer?");
             Console.WriteLine();
@@ -29,28 +29,35 @@ namespace BornToMove
             Console.WriteLine();
         }
 
-        public void DisplayExercise(Move exercise, double rating, string type)
+        public static void DisplayExercise(Move exercise, double rating, string type)
         {
-            switch(type)
+            if (exercise == null)
             {
-                case "suggestion":
-                    Console.WriteLine("--- You opted for an exercise suggestion (option [1]) ---");
-                    break;
-
-                case "list":
-                    Console.WriteLine($"--- You have chosen exercise: {exercise.Id}, {exercise.Name} ---");
-                    break;
+                GenericError();
             }
+            else
+            {
+                switch (type)
+                {
+                    case "suggestion":
+                        Console.WriteLine("--- You opted for an exercise suggestion (option [1]) ---");
+                        break;
 
-            Console.WriteLine();
-            Console.WriteLine($"Suggested Exercise: {exercise.Id}, {exercise.Name}");
-            Console.WriteLine($"Description: {exercise.Description}");
-            Console.WriteLine($"Sweat Rate: {exercise.SweatRate}");
-            Console.WriteLine();
+                    case "list":
+                        Console.WriteLine($"--- You have chosen exercise: {exercise.Id}, {exercise.Name} ---");
+                        break;
+                }
+
+                Console.WriteLine();
+                Console.WriteLine($"Suggested Exercise: {exercise.Id}, {exercise.Name}");
+                Console.WriteLine($"Description: {exercise.Description}");
+                Console.WriteLine($"Sweat Rate: {exercise.SweatRate}");
+                Console.WriteLine();
+            }
 
             if (rating == 0)
             {
-                Console.WriteLine("This exercise has not been rated yet");
+                Console.WriteLine("This exercise has not been rated yet.");
             }
             else
             {
@@ -59,12 +66,12 @@ namespace BornToMove
             Console.WriteLine();
         }
 
-        public void DisplayRating(double rating)
+        public static void DisplayRating(double rating)
         {
             Console.WriteLine($"This exercise has a rating of: {rating}/5");
         }
 
-        public void DisplayChoices(Dictionary<int, Move> exerciseList)
+        public static void DisplayChoices(Dictionary<int, Move> exerciseList)
         {
             Console.WriteLine("--- You opted to choose from a list with exercices (option [2]) ---");
             Console.WriteLine();
@@ -83,18 +90,50 @@ namespace BornToMove
             Console.WriteLine();
         }
 
-        public void AskInput(string question)
+        public static void PressContinue()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Press any button to continue after you finished the exercise.");
+            Console.ReadLine();
+            Console.WriteLine();
+        }
+
+        public static void ExerciseAdded()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Exercise succesfully added to the list");
+        }
+
+        public static void AskInput(string question)
         {
             Console.WriteLine();
             Console.WriteLine(question + ", followed by 'Enter' to continue: ");
         }
 
-        public void AskNumberKey()
+        public static void AskNumberKey()
         {
             Console.WriteLine("Press number key of the option you want to choose, followed by 'Enter' to continue: ");
         }
 
-        public void InvalidError(string error)
+        public static void AskUserRating()
+        {
+            Console.WriteLine("Congratulations, you finished the exercise!");
+            Console.WriteLine("On a scale from 1-5, how much did you like this exercise?");
+        }
+
+        public static void AskUserIntensity()
+        {
+            Console.WriteLine();
+            Console.WriteLine("And on a scale from 1-5, how intense did you find exercise?");
+        }
+
+        public static void GenericError()
+        {
+            Console.WriteLine();
+            Console.WriteLine("--- Error: something went wrong. ---");
+        }
+
+        public static void InvalidError(string error)
         {
             string errortext = "Unknown error.";
 
