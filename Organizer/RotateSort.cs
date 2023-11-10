@@ -1,25 +1,28 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Organizer
 {
-	public class RotateSort
+	public class RotateSort<T>
 	{
+        private IComparer<T> Comparer;
 
-        private List<int> array = new List<int>();
+        public List<T> array = new List<T>();
 
         /// <summary>
         /// Sort an array using the functions below
         /// </summary>
         /// <param name="input">The unsorted array</param>
         /// <returns>The sorted array</returns>
-        public List<int> Sort(List<int> input)
+        public List<T> Sort(List<T> input, IComparer<T> comparer)
         {
-            this.array = new List<int>(input);
-
+            array = new List<T>(input);
+            Comparer = comparer;
             SortFunction(0, array.Count - 1);
-            return this.array;
+            return array;
         }
+
 
         /// <summary>
         /// 
@@ -47,23 +50,23 @@ namespace Organizer
         /// <returns>The index in the array of the first of the 'high' digits</returns>
         private int Partitioning(int start, int end)
         {
-            int pivot = this.array[end];
+            T pivot = array[end];
             int i = start - 1;
 
             for (int j = start; j <= end - 1; j++) 
             {
-                if (this.array[j] < pivot)
+                if (Comparer.Compare(array[j], pivot) <0)
                 {
                     i++;
                     // swap values if smaller than pivot
-                    int temp = this.array[i];
-                    this.array[i] = this.array[j];
+                    T temp = array[i];
+                    this.array[i] = array[j];
                     this.array[j] = temp;
                 }
             }
-            int pivotSpot = this.array[i + 1]; // position of pivot at (i + 1)
-            array[i + 1] = this.array[end];
-            this.array[end] = pivotSpot; // places the pivot (which was at the end of the array) on its correct pivotspot
+            T pivotSpot = array[i + 1]; // position of pivot at (i + 1)
+            array[i + 1] = array[end];
+            array[end] = pivotSpot; // places the pivot (which was at the end of the array) on its correct pivotspot
 
             return i + 1; // return location of pivot
         }
