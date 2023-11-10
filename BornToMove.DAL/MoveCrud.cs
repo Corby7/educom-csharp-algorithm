@@ -76,15 +76,56 @@ namespace BornToMove.DAL
         }
 
 
-        public Dictionary<int, Move>? ReadAllMoves()
+        public List<Move>? ReadAllMoves()
         {
             try
             {
-                return context.Move.ToDictionary(move => move.Id, move => move);
+                return context.Move.ToList();
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Error while reading all moves: " + ex.Message);
+                return null;
+            }
+        }
+
+        public Dictionary<int, MoveRating>? ReadAllAverageMoveRatings()
+        {
+            try
+            {
+                var moveData = context.Move.ToList();  // Fetch Move data
+
+                var AllAverageMoveRatings = context.MoveRating
+                    .GroupBy(rating => rating.Move.Id)
+                    .ToDictionary(
+                        group => group.Key,
+                        group => new MoveRating
+                        {
+                            Id = group.Key, // Assuming Move ID is the key
+                            Move = moveData.FirstOrDefault(move => move.Id == group.Key), // Fetch associated Move object
+                            Rating = group.Average(r => r.Rating), // Calculate average rating
+                                                                   // Include other properties as needed
+                        }
+                    );
+
+                return AllAverageMoveRatings;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error while reading all moveratings: " + ex.Message);
+                return null;
+            }
+        }
+
+        public List<double> ReadAllRatings()
+        {
+            try
+            {
+                return context.MoveRating.Select(rating => rating.Rating).ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error while reading all ratings: " + ex.Message);
                 return null;
             }
         }
@@ -145,6 +186,8 @@ namespace BornToMove.DAL
 
             return roundedRating;
         }
+
+       
 
     }
 }

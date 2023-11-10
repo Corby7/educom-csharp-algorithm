@@ -104,21 +104,26 @@ namespace BornToMove
 
                         View.ExerciseAdded();
                     }
-                    else if (buMove.ExerciseList.TryGetValue(selectedExerciseId, out Move selectedExercise))
-                    {
-                        validOptionSelected = true;
-                        
-                        buMove.GetExercise(selectedExerciseId);
-
-                        View.DisplayExercise(buMove.SelectedMove, buMove.SelectedMoveRating, "list");
-
-                        View.PressContinue();
-
-                        AskForRatings();
-                    }
                     else
                     {
-                        View.InvalidError("not found");
+                        MoveAverageRating selectedExercise = buMove.ExerciseList.FirstOrDefault(exercise => exercise.Move.Id == selectedExerciseId);
+
+                        if (selectedExercise != null)
+                        {
+                            validOptionSelected = true;
+
+                            buMove.GetExercise(selectedExerciseId);
+
+                            View.DisplayExercise(buMove.SelectedMove, buMove.SelectedMoveRating, "list");
+
+                            View.PressContinue();
+
+                            AskForRatings();
+                        }
+                        else
+                        {
+                            View.InvalidError("not found");
+                        }
                     }
                 }
                 else

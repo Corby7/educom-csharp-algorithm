@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using BornToMove.DAL;
+using Organizer;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace BornToMove.Business
@@ -7,25 +8,18 @@ namespace BornToMove.Business
     public class BuMove
     {
         private readonly MoveCrud crud;
+
+        private readonly RotateSort<MoveAverageRating> sorter;
         public Move SelectedMove { get; set; }
 
         public double SelectedMoveRating { get; set; }
 
-        public Dictionary<int, Move> ExerciseList = new Dictionary<int, Move>();
+        public List<MoveAverageRating> ExerciseList = new List<MoveAverageRating>();
 
         public BuMove(MoveCrud crud)
         {
             this.crud = crud;
-        }
-
-        public void SetSelectedMove(Move move)
-        {
-            this.SelectedMove = move;
-        }
-
-        private Move GetSelectedMove()
-        {
-            return SelectedMove;
+            this.sorter = new RotateSort<MoveAverageRating>();
         }
 
         public void GenerateRandomSuggestion()
@@ -84,18 +78,21 @@ namespace BornToMove.Business
 
         public void GetExerciseList()
         {
-            Dictionary<int, Move>? movements = crud.ReadAllMoves();
-            
+            List<Move>? movements = crud.ReadAllMoves();
+
             if (movements != null)
             {
-                foreach (var kvp in movements)
+                foreach (Move move in movements)
                 {
-                    int exerciseId = kvp.Key;
-                    Move exercise = kvp.Value;
-
-                    ExerciseList.Add(exerciseId, exercise);
+                    ExerciseList.Add(new MoveAverageRating()
+                    {
+                        Move = move,
+                        AverageRating = crud.ReadAverageRatingById(move.Id)
+                    });
                 }
+                ExerciseList = sorter.Sort(ExerciseList, new RatingsConverter());
             }
+            
         }
 
         public void SaveMove (string name, string description, int sweatrate)
@@ -111,7 +108,7 @@ namespace BornToMove.Business
         public void SaveMoveRating(double rating, double vote)
         {
 
-            Move selectedMove = GetSelectedMove();
+            Move selectedMove = SelectedMove;
 
             crud.CreateMoveRating(new MoveRating()
             {

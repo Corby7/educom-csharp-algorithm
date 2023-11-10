@@ -31,10 +31,10 @@ namespace Organizer
             ShowList("Sorted RandomList (shift highest sort)", sortedRandomList1);
 
             // Second sorting method
-            RotateSort rotateSort = new RotateSort();
+            RotateSort<int> rotateSort = new RotateSort<int>();
 
             stopWatch.Restart();
-            List<int> sortedRandomList2 = rotateSort.Sort(unsortedRandomList);
+            List<int> sortedRandomList2 = rotateSort.Sort(unsortedRandomList, Comparer<int>.Default); 
             stopWatch.Stop();
             var timeElapsed2 = stopWatch.Elapsed;
 

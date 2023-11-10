@@ -71,7 +71,7 @@ namespace BornToMove
             Console.WriteLine($"This exercise has a rating of: {rating}/5");
         }
 
-        public static void DisplayChoices(Dictionary<int, Move> exerciseList)
+        public static void DisplayChoices(List<MoveAverageRating> exerciseList)
         {
             Console.WriteLine("--- You opted to choose from a list with exercices (option [2]) ---");
             Console.WriteLine();
@@ -79,12 +79,10 @@ namespace BornToMove
             Console.WriteLine();
             Console.WriteLine("[0]: --- add your own exercise ---");
 
-            foreach (var kvp in exerciseList)
+            foreach (MoveAverageRating exercise in exerciseList)
             {
-                int exerciseId = kvp.Key;
-                Move exercise = kvp.Value;
-
-                Console.WriteLine($"[{exerciseId}]: {exercise.Name}, sweatrate: {exercise.SweatRate}");
+                string averageRating = exercise.AverageRating > 0 ? $"{exercise.AverageRating}" : "This exercise has not been rated yet";
+                Console.WriteLine($"[{exercise.Move.Id}]: {exercise.Move.Name}, sweatrate: {exercise.Move.SweatRate}, review rating: {averageRating}");
             }
 
             Console.WriteLine();
@@ -93,7 +91,7 @@ namespace BornToMove
         public static void PressContinue()
         {
             Console.WriteLine();
-            Console.WriteLine("Press any button to continue after you finished the exercise.");
+            Console.WriteLine("--- Press any button to continue after you finished the exercise. ---");
             Console.ReadLine();
             Console.WriteLine();
         }
