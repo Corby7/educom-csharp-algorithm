@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MvCBornToMove.Data;
 
@@ -11,9 +12,11 @@ using MvCBornToMove.Data;
 namespace MvCBornToMove.Migrations
 {
     [DbContext(typeof(MvCBornToMoveContext))]
-    partial class MvCBornToMoveContextModelSnapshot : ModelSnapshot
+    [Migration("20231115101129_DoubleToInt")]
+    partial class DoubleToInt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,8 +43,8 @@ namespace MvCBornToMove.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<int>("SweatRate")
-                        .HasColumnType("int");
+                    b.Property<decimal>("SweatRate")
+                        .HasColumnType("decimal(3, 1)");
 
                     b.HasKey("Id");
 
@@ -62,8 +65,8 @@ namespace MvCBornToMove.Migrations
                     b.Property<int?>("MoveId")
                         .HasColumnType("int");
 
-                    b.Property<double>("Rating")
-                        .HasColumnType("float");
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

@@ -12,15 +12,16 @@ namespace MvCBornToMove.Models
         [Required]
         public string? Name { get; set; }
 
-        [StringLength(200, MinimumLength = 10)]
-        [RegularExpression(@"^[A-Z]+[a-zA-Z\s]*$")]
+        [StringLength(2000, MinimumLength = 10)]
+        [RegularExpression(@"^[A-Z]+[a-zA-Z0-9\s.,-]*$")]
         [Required]
         public string? Description { get; set; }
 
-        [Display(Name = "Sweat Rate")]
-        [Range(1, 10)]
-        [Column(TypeName = "decimal(3, 1)")] //sweatrate in decimalen doen? wordt sowieso nog verkeerd weergegeven op de site
-        public decimal SweatRate { get; set; }
+        [Display(Name = "Sweat Rate (/5)")]
+        [Range(1, 5)]
+        public int SweatRate { get; set; }
+
+        virtual public ICollection<MoveRating>? Ratings { get; set; }
 
     }
 }

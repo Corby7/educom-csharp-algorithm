@@ -1,36 +1,85 @@
-﻿@model MvCBornToMove.Models.Move
+﻿@model MvCBornToMove.Models.MoveAverageRating
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Exercise Info";
 }
 
-<h1>Details</h1>
+<h1>@Html.DisplayFor(model => model.Move.Name)</h1>
 
 <div>
-    <h4>Move</h4>
+    <h5 class="fw-light">Exercise Information</h5>
     <hr />
+
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
+            @Html.DisplayNameFor(model => model.Move.Description)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
+            @Html.DisplayFor(model => model.Move.Description)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
+            @Html.DisplayNameFor(model => model.Move.SweatRate)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SweatRate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SweatRate)
+            @Html.DisplayFor(model => model.Move.SweatRate)
         </dd>
     </dl>
+    <hr />
+
+    <h6 class ="fw-light">Community Ratings</h6>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AverageRating)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.AverageRating)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AverageIntensity)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.AverageIntensity)
+        </dd>
+    </dl>
+    <hr />
+
+    <h6 class="fw-light">Your Rating</h6>
+    <form asp-action="Edit">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        @* <input type="hidden" asp-for="Id" /> *@
+
+        <label for="reviewRating" class="form-label">Rate this exercise: <span id="selectedRating">0</span>/5</label>
+        <br />
+        <input type="range" class="form-range" min="0" max="5" step="0.5" id="reviewRating" value="0" style="width: 25%;">
+
+        <script>
+            // JavaScript to handle the change event and update the displayed value
+            document.getElementById("reviewRating").addEventListener("input", function() {
+              var inputValue = this.value;
+              document.getElementById("selectedRating").innerText = inputValue;
+            });
+        </script>
+
+        <br />
+        <label for="reviewIntensity" class="form-label">Exercise intensity: <span id="selectedIntensity">0</span>/10</label>
+        <br />
+        <input type="range" class="form-range" min="0" max="10" step="0.5" id="reviewIntensity" value="0" style="width: 50%;">
+
+        <script>
+            // JavaScript to handle the change event and update the displayed intensity value
+            document.getElementById("reviewIntensity").addEventListener("input", function () {
+                var intensityValue = this.value;
+                document.getElementById("selectedIntensity").innerText = intensityValue;
+            });
+        </script>
+
+        <div class="form-group">
+            <input type="submit" value="Submit" class="btn btn-primary" />
+        </div>
+    </form>
+
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model?.Move.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

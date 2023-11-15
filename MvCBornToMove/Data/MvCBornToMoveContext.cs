@@ -14,6 +14,7 @@ namespace MvCBornToMove.Data
         {
         }
 
-        public DbSet<MvCBornToMove.Models.Move> Move { get; set; } = default!;
+        public DbSet<Move> Move { get; set; } = default!;
+        public DbSet<MoveRating> MoveRating { get; set; } = default!;
     }
 }

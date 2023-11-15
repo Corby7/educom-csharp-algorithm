@@ -21,19 +21,19 @@ namespace MvCBornToMove.Models
                     new Move
                     {
                         Name = "Push Up",
-                        Description = "Ga horizontaal liggen op teentoppen en handen. Laat het lijf langzaam zakken tot de neus de grond bijna raakt. Duw het lijf terug nu omhoog tot de ellebogen bijna gestrekt zijn. Vervolgens weer laten zakken. Doe dit 20 keer zonder tussenpauzes",
+                        Description = "Lie horizontally on tiptoes and hands. Slowly lower the body until the nose almost touches the ground. Push the body back up until the elbows are almost straight. Then lower it again. Repeat this 20 times without pauses.",
                         SweatRate = 3
                     },
                     new Move
                     {
                         Name = "Planking",
-                        Description = "Ga horizontaal liggen op teentoppen en onderarmen. Houdt deze positie 1 minuut vast",
+                        Description = "Lie horizontally on tiptoes and forearms. Hold this position for 1 minute.",
                         SweatRate = 3
                     },
                     new Move
                     {
                         Name = "Squat",
-                        Description = "Ga staan met gestrekte armen. Zak door de knieën tot de billen de grond bijna raken. Ga weer volledig gestrekt staan. Herhaal dit 20 keer zonder tussenpauzes",
+                        Description = "Stand with arms extended. Bend your knees until your buttocks almost touch the ground. Stand up fully again. Repeat this 20 times without pauses.",
                         SweatRate = 5
                     }
                 );

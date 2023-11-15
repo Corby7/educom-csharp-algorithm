@@ -22,9 +22,47 @@ namespace MvCBornToMove.Controllers
         // GET: Moves
         public async Task<IActionResult> Index()
         {
-              return _context.Move != null ? 
+            try
+            {
+                var movesWithAverageRatings = await ReadAllMovesWithAverageRatingsAsync();
+
+                if (movesWithAverageRatings != null)
+                {
+                    return View(movesWithAverageRatings);
+                }
+                else
+                {
+                    return Problem("Error while reading all moves.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return Problem("Error while processig request: " + ex.Message);
+            }
+              /*return _context.Move != null ? 
                           View(await _context.Move.ToListAsync()) :
-                          Problem("Entity set 'MvCBornToMoveContext.Move'  is null.");
+                          Problem("Entity set 'MvCBornToMoveContext.Move' is null.");*/
+        }
+
+        public async Task<List<MoveAverageRating>?> ReadAllMovesWithAverageRatingsAsync()
+        {
+            try
+            {
+                var movesWithAverageRatings = await _context.Move
+                .Select(m => new MoveAverageRating()
+                 {
+                     Move = m,
+                     AverageRating = m.Ratings.Select(mr => (double?)mr.Rating).Average() ?? 0.0
+                 })
+                    .ToListAsync();
+
+                return movesWithAverageRatings;
+            }
+            catch (Exception ex)
+            {
+                Problem("Error while reading all moves: " + ex.Message);
+                return null;
+            }
         }
 
         // GET: Moves/Details/5
@@ -35,14 +73,37 @@ namespace MvCBornToMove.Controllers
                 return NotFound();
             }
 
-            var move = await _context.Move
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (move == null)
+            var moveWithAverages = await ReadMoveWithAveragesAsync(id);
+
+            if (moveWithAverages == null)
             {
                 return NotFound();
             }
 
-            return View(move);
+            return View(moveWithAverages);
+        }
+
+        public async Task<MoveAverageRating?> ReadMoveWithAveragesAsync(int? id)
+        {
+            try
+            {
+                var moveWithAverages = await _context.Move
+                    .Where(m => m.Id == id)
+                    .Select(m => new MoveAverageRating()
+                    {
+                        Move = m,
+                        AverageRating = m.Ratings.Select(mr => (double?)mr.Rating).Average() ?? 0.0,
+                        AverageIntensity = m.Ratings.Select(mr => (double?)mr.Intensity).Average() ?? 0.0
+                    })
+                    .FirstOrDefaultAsync();
+
+                return moveWithAverages;       
+            }
+            catch (Exception ex)
+            {
+                Problem("Error while reading all moves: " + ex.Message);
+                return null;
+            }
         }
 
         // GET: Moves/Create

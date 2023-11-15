@@ -5,22 +5,10 @@
 namespace MvCBornToMove.Migrations
 {
     /// <inheritdoc />
-    public partial class IntToDecimal : Migration
+    public partial class DecimalToInt : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.AlterColumn<decimal>(
-                name: "SweatRate",
-                table: "Move",
-                type: "decimal(18,0)",
-                nullable: false,
-                oldClrType: typeof(int),
-                oldType: "int");
-        }
-
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<int>(
                 name: "SweatRate",
@@ -28,7 +16,19 @@ namespace MvCBornToMove.Migrations
                 type: "int",
                 nullable: false,
                 oldClrType: typeof(decimal),
-                oldType: "decimal(18,0)");
+                oldType: "decimal(3,1)");
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.AlterColumn<decimal>(
+                name: "SweatRate",
+                table: "Move",
+                type: "decimal(3,1)",
+                nullable: false,
+                oldClrType: typeof(int),
+                oldType: "int");
         }
     }
 }
