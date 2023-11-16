@@ -109,21 +109,26 @@ namespace MvCBornToMove.Controllers
         // POST: Moves/Details/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Details(int moveId, double reviewRating, double reviewIntensity)
+        public async Task<IActionResult> Details([Bind("Move, AverageRating, AverageIntensity")] MoveAverageRating moveAverageRating)
         {//add modelstate is valid for range and stuff to work
-        
+
+            if (ModelState.IsValid)
+            {
                 MoveRating moveRating = new MoveRating
                 {
-                    Move = _context.Move.Find(moveId),
-                    Rating = reviewRating,
-                    Intensity = reviewIntensity
+                    Move = _context.Move.Find(moveAverageRating.Move.Id), //kan move van moveaveragerating dus niet gebruiken om dat efcore die niet kent?
+                    Rating = moveAverageRating.AverageRating,
+                    Intensity = moveAverageRating.AverageIntensity
                 };
 
                 _context.MoveRating.Add(moveRating);
                 await _context.SaveChangesAsync();
 
+                return View(moveAverageRating);
 
-            return RedirectToAction(nameof(Index));
+            }
+
+            return View(moveAverageRating);
         }
 
         // GET: Moves/Create
