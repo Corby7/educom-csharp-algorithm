@@ -9,6 +9,7 @@ namespace MvCBornToMove
     {
         public static void Main(string[] args)
         {
+
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddDbContext<MvCBornToMoveContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("MvCBornToMoveContext") ?? throw new InvalidOperationException("Connection string 'MvCBornToMoveContext' not found.")));
@@ -36,6 +37,8 @@ namespace MvCBornToMove
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseRequestLocalization("en-UY", "fr-FR");
 
             app.UseAuthorization();
 

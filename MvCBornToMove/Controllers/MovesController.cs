@@ -92,8 +92,8 @@ namespace MvCBornToMove.Controllers
                     .Select(m => new MoveAverageRating()
                     {
                         Move = m,
-                        AverageRating = m.Ratings.Select(mr => (double?)mr.Rating).Average() ?? 0.0,
-                        AverageIntensity = m.Ratings.Select(mr => (double?)mr.Intensity).Average() ?? 0.0
+                        AverageRating = Math.Round(m.Ratings.Select(mr => (double?)mr.Rating).Average() ?? 0.0, 1),
+                        AverageIntensity = Math.Round(m.Ratings.Select(mr => (double?)mr.Intensity).Average() ?? 0.0, 1)
                     })
                     .FirstOrDefaultAsync();
 
@@ -104,6 +104,26 @@ namespace MvCBornToMove.Controllers
                 Problem("Error while reading all moves: " + ex.Message);
                 return null;
             }
+        }
+
+        // POST: Moves/Details/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Details(int moveId, double reviewRating, double reviewIntensity)
+        {//add modelstate is valid for range and stuff to work
+        
+                MoveRating moveRating = new MoveRating
+                {
+                    Move = _context.Move.Find(moveId),
+                    Rating = reviewRating,
+                    Intensity = reviewIntensity
+                };
+
+                _context.MoveRating.Add(moveRating);
+                await _context.SaveChangesAsync();
+
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Moves/Create
