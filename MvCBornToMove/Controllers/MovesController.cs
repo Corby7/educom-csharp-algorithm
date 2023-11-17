@@ -39,22 +39,15 @@ namespace MvCBornToMove.Controllers
             {
                 return Problem("Error while processig request: " + ex.Message);
             }
-              /*return _context.Move != null ? 
-                          View(await _context.Move.ToListAsync()) :
-                          Problem("Entity set 'MvCBornToMoveContext.Move' is null.");*/
         }
 
-        public async Task<List<MoveAverageRating>?> ReadAllMovesWithAverageRatingsAsync()
+        public async Task<List<Move>?> ReadAllMovesWithAverageRatingsAsync()
         {
             try
             {
                 var movesWithAverageRatings = await _context.Move
-                .Select(m => new MoveAverageRating()
-                 {
-                     Move = m,
-                     AverageRating = m.Ratings.Select(mr => (double?)mr.Rating).Average() ?? 0.0
-                 })
-                    .ToListAsync();
+                .Include(m => m.AverageRatings)
+                .ToListAsync();
 
                 return movesWithAverageRatings;
             }
@@ -87,6 +80,23 @@ namespace MvCBornToMove.Controllers
         {
             try
             {
+                var moveWithAverages = await _context.MoveAverageRating
+                .Where(mar => mar.Id == id)
+                .Include(mar => mar.Move)
+                .FirstOrDefaultAsync();
+
+                return moveWithAverages;
+            }
+            catch (Exception ex)
+            {
+                Problem("Error while reading all moves: " + ex.Message);
+                return null;
+            }
+        }
+/*        public async Task<MoveAverageRating?> ReadMoveWithAveragesAsync(int? id)
+        {
+            try
+            {
                 var moveWithAverages = await _context.Move
                     .Where(m => m.Id == id)
                     .Select(m => new MoveAverageRating()
@@ -104,7 +114,7 @@ namespace MvCBornToMove.Controllers
                 Problem("Error while reading all moves: " + ex.Message);
                 return null;
             }
-        }
+        }*/
 
         // POST: Moves/Details/5
         [HttpPost]

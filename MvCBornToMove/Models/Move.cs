@@ -23,5 +23,6 @@ namespace MvCBornToMove.Models
 
         virtual public ICollection<MoveRating>? Ratings { get; set; }
 
+        public MoveAverageRating? AverageRatings { get; set; }
     }
 }

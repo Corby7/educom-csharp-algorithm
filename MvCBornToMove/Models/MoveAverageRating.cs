@@ -4,6 +4,9 @@ namespace MvCBornToMove.Models
 {
     public class MoveAverageRating
     {
+        [Key]
+        public int Id { get; set; }
+
         public Move? Move { get; set; }
 
         [Display(Name = "Rating (/5)")]

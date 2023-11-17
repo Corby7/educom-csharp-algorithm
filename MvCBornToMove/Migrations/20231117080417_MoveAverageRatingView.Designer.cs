@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MvCBornToMove.Data;
 
@@ -11,9 +12,11 @@ using MvCBornToMove.Data;
 namespace MvCBornToMove.Migrations
 {
     [DbContext(typeof(MvCBornToMoveContext))]
-    partial class MvCBornToMoveContextModelSnapshot : ModelSnapshot
+    [Migration("20231117080417_MoveAverageRatingView")]
+    partial class MoveAverageRatingView
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,22 +51,6 @@ namespace MvCBornToMove.Migrations
                     b.ToTable("Move");
                 });
 
-            modelBuilder.Entity("MvCBornToMove.Models.MoveAverageRating", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.Property<double>("AverageIntensity")
-                        .HasColumnType("float");
-
-                    b.Property<double>("AverageRating")
-                        .HasColumnType("float");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MoveAverageRating");
-                });
-
             modelBuilder.Entity("MvCBornToMove.Models.MoveRating", b =>
                 {
                     b.Property<int>("Id")
@@ -88,17 +75,6 @@ namespace MvCBornToMove.Migrations
                     b.ToTable("MoveRating");
                 });
 
-            modelBuilder.Entity("MvCBornToMove.Models.MoveAverageRating", b =>
-                {
-                    b.HasOne("MvCBornToMove.Models.Move", "Move")
-                        .WithOne("AverageRatings")
-                        .HasForeignKey("MvCBornToMove.Models.MoveAverageRating", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Move");
-                });
-
             modelBuilder.Entity("MvCBornToMove.Models.MoveRating", b =>
                 {
                     b.HasOne("MvCBornToMove.Models.Move", "Move")
@@ -110,8 +86,6 @@ namespace MvCBornToMove.Migrations
 
             modelBuilder.Entity("MvCBornToMove.Models.Move", b =>
                 {
-                    b.Navigation("AverageRatings");
-
                     b.Navigation("Ratings");
                 });
 #pragma warning restore 612, 618

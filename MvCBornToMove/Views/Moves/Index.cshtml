@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MvCBornToMove.Models.MoveAverageRating>
+﻿@model IEnumerable<MvCBornToMove.Models.Move>
 
 @{
     ViewData["Title"] = "Exercise List";
@@ -10,32 +10,42 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Move.Name)
+                @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Move.SweatRate)
+                @Html.DisplayNameFor(model => model.SweatRate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.AverageRating)
+                @Html.DisplayNameFor(model => model.AverageRatings.AverageRating)
             </th>
         </tr>
     </thead>
     <tbody>
+
 @foreach (var item in Model) {
+            @* var roundedRating = Math.Round(item.AverageRatings.AverageRating, 1); *@
+
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Move.Name)
+                @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Move.SweatRate)
+                @Html.DisplayFor(modelItem => item.SweatRate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.AverageRating)
+                @if (item.AverageRatings != null)
+                {
+                        @Math.Round(item.AverageRatings.AverageRating, 1)
+                }
+                else
+                {
+                    <text>-</text>
+                }
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Move.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Move.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Move.Id">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
 }
