@@ -66,79 +66,87 @@ namespace MvCBornToMove.Controllers
                 return NotFound();
             }
 
-            var moveWithAverages = await ReadMoveWithAveragesAsync(id);
+            var move = await ReadMoveWithAveragesAsync(id);
 
-            if (moveWithAverages == null)
+            if (move == null)
             {
                 return NotFound();
             }
 
-            return View(moveWithAverages);
+            return View(move);
         }
 
-        public async Task<MoveAverageRating?> ReadMoveWithAveragesAsync(int? id)
-        {
-            try
+            public async Task<MoveRating> ReadMoveWithAveragesAsync(int? id)
             {
-                var moveWithAverages = await _context.MoveAverageRating
-                .Where(mar => mar.Id == id)
-                .Include(mar => mar.Move)
-                .FirstOrDefaultAsync();
+                try
+                {
+                    var moveWithAverages = await _context.MoveRating
+                        .Where(m => m.Move.Id == id)
+                        .Include(mr => mr.Move)
+                            .ThenInclude(move => move.AverageRatings)
+                        .FirstOrDefaultAsync();
 
-                return moveWithAverages;
-            }
-            catch (Exception ex)
-            {
-                Problem("Error while reading all moves: " + ex.Message);
-                return null;
-            }
-        }
-/*        public async Task<MoveAverageRating?> ReadMoveWithAveragesAsync(int? id)
-        {
-            try
-            {
-                var moveWithAverages = await _context.Move
-                    .Where(m => m.Id == id)
-                    .Select(m => new MoveAverageRating()
+                    if (moveWithAverages == null)
                     {
-                        Move = m,
-                        AverageRating = Math.Round(m.Ratings.Select(mr => (double?)mr.Rating).Average() ?? 0.0, 1),
-                        AverageIntensity = Math.Round(m.Ratings.Select(mr => (double?)mr.Intensity).Average() ?? 0.0, 1)
-                    })
-                    .FirstOrDefaultAsync();
+                        var moveWithoutAverages = await _context.Move.FindAsync(id);
+                        return new MoveRating
+                        {
+                            Move = moveWithoutAverages,
+                            Rating = 0,
+                            Intensity = 0
+                        };
+                    }
 
-                return moveWithAverages;       
+                    return moveWithAverages;
+                }
+                catch (Exception ex)
+                {
+                    Problem("Error while reading all moves: " + ex.Message);
+                    return null;
+                }
             }
-            catch (Exception ex)
-            {
-                Problem("Error while reading all moves: " + ex.Message);
-                return null;
-            }
-        }*/
 
         // POST: Moves/Details/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Details([Bind("Move, AverageRating, AverageIntensity")] MoveAverageRating moveAverageRating)
+        public async Task<IActionResult> Details([Bind("Move, Rating, Intensity")] MoveRating moveRating)
         {//add modelstate is valid for range and stuff to work
+
+            ModelState.Remove("Move.AverageRatings.AverageRating");
+            ModelState.Remove("Move.AverageRatings.AverageIntensity");
 
             if (ModelState.IsValid)
             {
-                MoveRating moveRating = new MoveRating
+                Move move = await _context.Move.FindAsync(moveRating.Move.Id); //kan move van moveaveragerating dus niet gebruiken om dat efcore die niet kent?
+
+                if (move !=null)
                 {
-                    Move = _context.Move.Find(moveAverageRating.Move.Id), //kan move van moveaveragerating dus niet gebruiken om dat efcore die niet kent?
-                    Rating = moveAverageRating.AverageRating,
-                    Intensity = moveAverageRating.AverageIntensity
-                };
+                    MoveRating newMoveRating = new MoveRating
+                    {
+                        Move = move,
+                        Rating = moveRating.Rating,
+                        Intensity = moveRating.Intensity
+                    };
 
-                _context.MoveRating.Add(moveRating);
-                await _context.SaveChangesAsync();
+                    _context.MoveRating.Add(newMoveRating);
+                    await _context.SaveChangesAsync();
 
-                return View(moveAverageRating);
+                    var moveRatingWithAverages = await _context.MoveRating
+                        .Where(mr => mr.Move.Id == move.Id)
+                        .Include(mr => mr.Move)
+                            .ThenInclude(moveRating => moveRating.AverageRatings)
+                        .FirstOrDefaultAsync();
+
+                    return View(moveRatingWithAverages);
+                }
+                else
+                {
+                    return NotFound();
+                }
 
             }
 
-            return View(moveAverageRating);
+            return View(moveRating);
         }
 
         // GET: Moves/Create

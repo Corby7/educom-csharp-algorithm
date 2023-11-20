@@ -1,4 +1,4 @@
-﻿@model MvCBornToMove.Models.MoveAverageRating
+﻿@model MvCBornToMove.Models.MoveRating
 
 @{
     ViewData["Title"] = "Exercise Info";
@@ -31,19 +31,23 @@
     <h6 class ="fw-light">Community Ratings</h6>
     <dl class="row">
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.AverageRating)
+            @Html.DisplayNameFor(model => model.Move.AverageRatings.AverageRating)
         </dt>
         <dd class="col-sm-10 pt-1">
             <div id="rating-bar" class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="5" style="width: 25%">
-                <div id="rating-bar-inner" class="progress-bar" style="">@Model.AverageRating</div>
+                <div id="rating-bar-inner" class="progress-bar" style="">
+                    @((Model.Move?.AverageRatings?.AverageRating != null) ? Math.Round(Model.Move.AverageRatings.AverageRating, 1).ToString() : "")
+                </div>
             </div>
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.AverageIntensity)
+            @Html.DisplayNameFor(model => model.Move.AverageRatings.AverageIntensity)
         </dt>
         <dd class="col-sm-10 pt-1">
             <div id="intensity-bar" class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="5" style="width: 25%">
-                <div id="intensity-bar-inner" class="progress-bar" style="">@Model.AverageIntensity</div>
+                <div id="intensity-bar-inner" class="progress-bar" style="">
+                    @((Model.Move?.AverageRatings?.AverageIntensity != null) ? Math.Round(Model.Move.AverageRatings.AverageIntensity, 1).ToString() : "")
+                </div>
             </div>
         </dd>
 
@@ -68,8 +72,14 @@
         }
 
         // Example usage: Update the progress bar to a new value (e.g., 4)
-        updateProgressBar('rating', @Model.AverageRating);
-        updateProgressBar('intensity', @Model.AverageIntensity);
+        @if (Model.Move?.AverageRatings != null)
+        {
+            <text>
+                updateProgressBar('rating', @Model.Move.AverageRatings.AverageRating);
+                updateProgressBar('intensity', @Model.Move.AverageRatings.AverageIntensity);
+            </text>
+        }
+
         updateProgressBar('sweatrate', @Model.Move.SweatRate);
     </script>
 
@@ -83,10 +93,12 @@
         <input type="hidden" asp-for="@Model.Move.Name" name="Move.Name" />
         <input type="hidden" asp-for="@Model.Move.Description" name="Move.Description" />
         <input type="hidden" asp-for="@Model.Move.SweatRate" name="Move.SweatRate" />
+        <input type="hidden" asp-for="@Model.Move.AverageRatings.AverageRating" name="Move.AverageRatings.AverageRating" />
+        <input type="hidden" asp-for="@Model.Move.AverageRatings.AverageIntensity" name="Move.AverageRatings.AverageIntensity" />
 
         <label for="reviewRating" class="form-label">How much did you like this exercise: <span id="selectedRating">0</span>/5</label>
         <br />
-        <input type="range" class="form-range" min="0" max="5" step="0.5" id="reviewRating" name="AverageRating" value="0" style="width: 25%;">
+        <input type="range" class="form-range" min="0" max="5" step="0.5" id="reviewRating" name="Rating" value="0" style="width: 25%;">
 
         <script>
             // JavaScript to handle the change event and update the displayed value
@@ -99,7 +111,7 @@
         <br />
         <label for="reviewIntensity" class="form-label">How intense was this exercise: <span id="selectedIntensity">0</span>/5</label>
         <br />
-        <input type="range" class="form-range" min="0" max="5" step="0.5" id="reviewIntensity" name="AverageIntensity" value="0" style="width: 25%;">
+        <input type="range" class="form-range" min="0" max="5" step="0.5" id="reviewIntensity" name="Intensity" value="0" style="width: 25%;">
 
         <script>
             // JavaScript to handle the change event and update the displayed intensity value

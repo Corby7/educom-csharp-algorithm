@@ -8,7 +8,8 @@ namespace MvCBornToMove.Models
 
         public Move? Move { get; set; }
 
-        [Range(1, 5)]
+        [Required(ErrorMessage = "Rating is required.")]
+        [Range(1, 5, ErrorMessage = "Rating must be between 1 and 5.")]
         public double Rating { get; set; }
 
         [Range(1, 5)]

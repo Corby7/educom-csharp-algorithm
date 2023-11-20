@@ -10,11 +10,9 @@ namespace MvCBornToMove.Models
         public Move? Move { get; set; }
 
         [Display(Name = "Rating (/5)")]
-        [Range(1, 5)]
         public double AverageRating { get; set; }
 
         [Display(Name = "Intensity (/5)")]
-        [Range(1, 5)]
         public double AverageIntensity { get; set; }  
     }
 }
